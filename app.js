@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Servir archivos estáticos
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 
@@ -47,11 +47,11 @@ app.get('/api/documentos', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('/financiero', (req, res) => {
-    res.sendFile(path.join(__dirname, 'financiero.html'));
+    res.sendFile(path.join(__dirname, 'public', 'financiero.html'));
 });
 
 app.listen(PORT, () => {
