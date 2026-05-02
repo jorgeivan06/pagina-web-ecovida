@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estados Financieros - ECOVIDA</title>
+    <link rel="icon" type="image/jpg" href="https://media.istockphoto.com/id/1133470104/es/vector/silueta-de-mujer-embarazada-con-coraz%C3%B3n-sobre-fondo-azul-oscuro.jpg?s=612x612&w=0&k=20&c=6tEK-z7WWit4tPXQwsAt_aouaMy1X2-vmMqYR-Swygg=">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <a href="/">
+                    <img src="https://static.wixstatic.com/media/7e16b4_47f971106b36479a905498b01633c52e~mv2.png/v1/fill/w_283,h_75,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Ecovida%20blanco%20y%20verde.png" alt="ECOVIDA">
+                </a>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/#nosotros">Nosotros</a></li>
+                    <li><a href="/#servicios">Especialidades</a></li>
+                    <li><a href="/#laboratorio">Laboratorio</a></li>
+                    <li><a href="/financiero">Financiero</a></li>
+                    <li><a href="/#citas" class="btn-nav">Agendar Cita</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main style="padding-top: 150px; min-height: 80vh;">
+        <section class="container">
+            <div class="text-center mb-50">
+                <span class="tagline">Gestión Documental</span>
+                <h2 class="title-section">Carga de Estados Financieros</h2>
+                <div class="divider"></div>
+            </div>
+
+            <!-- Zona de Subida -->
+            <div class="card-lab" style="max-width: 600px; margin: 0 auto 60px; padding: 40px; text-align: center;">
+                <h3 style="margin-bottom: 20px;"><i class="fas fa-cloud-upload-alt"></i> Subir Nuevo Documento</h3>
+                <form action="/upload-financiero" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="documento" accept=".pdf,.doc,.docx" required style="margin-bottom: 20px; display: block; width: 100%;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Cargar Archivo a la Plataforma</button>
+                </form>
+            </div>
+
+            <!-- Listado Dinámico de Documentos -->
+            <div class="text-center mb-50">
+                <h3 class="title-section" style="font-size: 2rem;">Documentos Disponibles</h3>
+            </div>
+            <div id="documentos-grid" class="grid-lab">
+                <!-- Se llenará con JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-grid-main">
+            <div class="footer-brand-side">
+                <img src="https://static.wixstatic.com/media/7e16b4_077240b038f34a1ba66ff0ee07287ffa~mv2.png/v1/fill/w_470,h_83,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/El%20Coraz%C3%B3n%20de%20Mam%C3%A1.png" alt="El Corazón de Mamá">
+                <p>Tu bienestar es el latido que nos mueve.</p>
+            </div>
+            <div class="footer-contact-side">
+                <h4><i class="fas fa-phone-alt"></i> Llámanos</h4>
+                <p>Línea fija: (605) 3198847</p>
+                <p>WhatsApp: 321 4273055</p>
+            </div>
+            <div class="footer-hours-side">
+                <h4><i class="fas fa-clock"></i> Horario</h4>
+                <p>Lun - Vie: 7:30 am - 6:00 pm</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ECOVIDA SAS. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Cargar los documentos dinámicamente
+        async function cargarDocumentos() {
+            const grid = document.getElementById('documentos-grid');
+            try {
+                const response = await fetch('/api/documentos');
+                const documentos = await response.json();
+                
+                if (documentos.length === 0) {
+                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">No hay documentos cargados actualmente.</p>';
+                    return;
+                }
+
+                grid.innerHTML = documentos.map(doc => `
+                    <div class="card-lab" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <i class="fas fa-file-pdf" style="font-size: 3rem; color: #d32f2f; margin-bottom: 20px;"></i>
+                        <h3 style="font-size: 1.1rem; margin-bottom: 15px;">${doc.name}</h3>
+                        <a href="${doc.url}" target="_blank" class="btn btn-secondary" style="padding: 8px 15px; font-size: 0.9rem;">Ver Documento</a>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error al cargar documentos:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', cargarDocumentos);
+
+        // Mostrar alerta de éxito si viene de la redirección
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('success')) {
+            alert('¡Documento subido correctamente!');
+        }
+    </script>
+</body>
+</html>
