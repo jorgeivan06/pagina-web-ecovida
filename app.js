@@ -60,3 +60,5 @@ app.listen(PORT, () => {
     console.log(`   Puerto: ${PORT}`);
     console.log(`================================================`);
 });
+
+module.exports = app;
