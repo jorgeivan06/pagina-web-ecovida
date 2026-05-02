@@ -267,6 +267,19 @@ img { max-width: 100%; height: auto; display: block; }
     transition: var(--transition);
 }
 
+/* Animación X para el menú */
+.menu-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.menu-toggle.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
 @media (max-width: 1024px) {
     section { padding: 80px 0; }
     .hero h1 { font-size: 3rem; }
