@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
+const { kv } = require('@vercel/kv');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -21,30 +23,37 @@ app.use(express.json());
 
 const CONFIG_PATH = path.join(__dirname, 'config.json');
 
-function getConfig() {
-    // 1. Prioridad: Variable de entorno (Para Vercel/Producción)
-    if (process.env.ADMIN_PASSWORD) {
-        return { adminPassword: process.env.ADMIN_PASSWORD };
-    }
-    
-    // 2. Intento de leer archivo local
+async function getAdminPassword() {
+    // 1. Prioridad: Vercel KV (Redis)
     try {
-        if (fs.existsSync(CONFIG_PATH)) {
-            return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
-        }
+        const kvPassword = await kv.get('adminPassword');
+        if (kvPassword) return kvPassword;
     } catch (e) {
-        console.error("Error leyendo config.json:", e);
+        console.error("Vercel KV no configurado o error:", e.message);
     }
 
-    // 3. Fallback final
-    return { adminPassword: 'admin123' };
+    // 2. Segunda prioridad: Variable de entorno
+    if (process.env.ADMIN_PASSWORD) {
+        return process.env.ADMIN_PASSWORD;
+    }
+    
+    // 3. Intento de leer archivo local (para desarrollo local)
+    try {
+        if (fs.existsSync(CONFIG_PATH)) {
+            const config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+            return config.adminPassword;
+        }
+    } catch (e) {}
+
+    // 4. Fallback final
+    return 'admin123';
 }
 
 // RUTA: Login Administrativo
-app.post('/api/admin/login', (req, res) => {
+app.post('/api/admin/login', async (req, res) => {
     const { password } = req.body;
-    const config = getConfig();
-    if (password === config.adminPassword) {
+    const adminPassword = await getAdminPassword();
+    if (password === adminPassword) {
         res.json({ success: true });
     } else {
         res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
@@ -52,14 +61,24 @@ app.post('/api/admin/login', (req, res) => {
 });
 
 // RUTA: Cambiar Contraseña
-app.post('/api/admin/change-password', (req, res) => {
+app.post('/api/admin/change-password', async (req, res) => {
     const { oldPassword, newPassword } = req.body;
-    const config = getConfig();
+    const adminPassword = await getAdminPassword();
     
-    if (oldPassword === config.adminPassword) {
-        config.adminPassword = newPassword;
-        fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
-        res.json({ success: true, message: 'Contraseña actualizada correctamente' });
+    if (oldPassword === adminPassword) {
+        try {
+            // Guardar en Vercel KV
+            await kv.set('adminPassword', newPassword);
+            
+            // Intentar guardar localmente (solo funcionará en local)
+            try {
+                fs.writeFileSync(CONFIG_PATH, JSON.stringify({ adminPassword: newPassword }, null, 2));
+            } catch (e) {}
+
+            res.json({ success: true, message: 'Contraseña actualizada correctamente' });
+        } catch (e) {
+            res.status(500).json({ success: false, message: 'Error al persistir la contraseña' });
+        }
     } else {
         res.status(401).json({ success: false, message: 'La contraseña actual es incorrecta' });
     }
@@ -117,7 +136,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const angularPath = path.join(__dirname, 'public', 'financiero-app', 'browser');
 app.use('/financiero', express.static(angularPath));
 
-// Fallback para Angular SPA (debe ir DESPUÉS de express.static)
+// Fallback para Angular SPA
 app.get(/\/financiero.*/, (req, res) => {
     res.sendFile(path.join(angularPath, 'index.html'));
 });
