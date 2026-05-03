@@ -22,10 +22,22 @@ app.use(express.json());
 const CONFIG_PATH = path.join(__dirname, 'config.json');
 
 function getConfig() {
-    if (!fs.existsSync(CONFIG_PATH)) {
-        fs.writeFileSync(CONFIG_PATH, JSON.stringify({ adminPassword: 'admin123' }));
+    // 1. Prioridad: Variable de entorno (Para Vercel/Producción)
+    if (process.env.ADMIN_PASSWORD) {
+        return { adminPassword: process.env.ADMIN_PASSWORD };
     }
-    return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+    
+    // 2. Intento de leer archivo local
+    try {
+        if (fs.existsSync(CONFIG_PATH)) {
+            return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+        }
+    } catch (e) {
+        console.error("Error leyendo config.json:", e);
+    }
+
+    // 3. Fallback final
+    return { adminPassword: 'admin123' };
 }
 
 // RUTA: Login Administrativo
