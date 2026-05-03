@@ -23,21 +23,29 @@ app.use(express.json());
 
 const CONFIG_PATH = path.join(__dirname, 'config.json');
 
+// Función mejorada para detectar si KV está configurado realmente
+function isKVEnabled() {
+    // Vercel KV inyecta KV_REST_API_URL o similares
+    return !!(process.env.KV_REST_API_URL || process.env.KV_URL);
+}
+
 async function getAdminPassword() {
-    // 1. Prioridad: Vercel KV (Redis)
-    try {
-        const kvPassword = await kv.get('adminPassword');
-        if (kvPassword) return kvPassword;
-    } catch (e) {
-        console.error("Vercel KV no configurado o error:", e.message);
+    // 1. Intentar Vercel KV si está disponible
+    if (isKVEnabled()) {
+        try {
+            const kvPassword = await kv.get('adminPassword');
+            if (kvPassword) return kvPassword;
+        } catch (e) {
+            console.error("Error al leer de KV:", e.message);
+        }
     }
 
-    // 2. Segunda prioridad: Variable de entorno
+    // 2. Variable de entorno manual
     if (process.env.ADMIN_PASSWORD) {
         return process.env.ADMIN_PASSWORD;
     }
     
-    // 3. Intento de leer archivo local (para desarrollo local)
+    // 3. Archivo local (Desarrollo)
     try {
         if (fs.existsSync(CONFIG_PATH)) {
             const config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
@@ -45,9 +53,18 @@ async function getAdminPassword() {
         }
     } catch (e) {}
 
-    // 4. Fallback final
+    // 4. Clave maestra inicial
     return 'admin123';
 }
+
+// RUTA DIAGNÓSTICA: Para verificar conexión a base de datos
+app.get('/api/admin/debug-kv', async (req, res) => {
+    res.json({
+        kvConfigured: isKVEnabled(),
+        envKeysFound: Object.keys(process.env).filter(k => k.includes('KV')),
+        timestamp: new Date().toISOString()
+    });
+});
 
 // RUTA: Login Administrativo
 app.post('/api/admin/login', async (req, res) => {
@@ -66,18 +83,21 @@ app.post('/api/admin/change-password', async (req, res) => {
     const adminPassword = await getAdminPassword();
     
     if (oldPassword === adminPassword) {
-        try {
-            // Guardar en Vercel KV
-            await kv.set('adminPassword', newPassword);
-            
-            // Intentar guardar localmente (solo funcionará en local)
+        if (isKVEnabled()) {
+            try {
+                await kv.set('adminPassword', newPassword);
+                return res.json({ success: true, message: 'Contraseña actualizada en la Nube (KV)' });
+            } catch (e) {
+                return res.status(500).json({ success: false, message: 'Error en KV: ' + e.message });
+            }
+        } else {
+            // Si no hay KV, intentamos local (solo funciona en tu PC)
             try {
                 fs.writeFileSync(CONFIG_PATH, JSON.stringify({ adminPassword: newPassword }, null, 2));
-            } catch (e) {}
-
-            res.json({ success: true, message: 'Contraseña actualizada correctamente' });
-        } catch (e) {
-            res.status(500).json({ success: false, message: 'Error al persistir la contraseña' });
+                return res.json({ success: true, message: 'Contraseña actualizada localmente' });
+            } catch (e) {
+                return res.status(500).json({ success: false, message: 'No hay base de datos conectada en Vercel. Use variables de entorno.' });
+            }
         }
     } else {
         res.status(401).json({ success: false, message: 'La contraseña actual es incorrecta' });
@@ -128,15 +148,14 @@ app.delete('/api/documentos/:filename', (req, res) => {
     }
 });
 
-// Archivos estáticos generales
+// Archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Aplicación Angular en /financiero
+// Aplicación Angular
 const angularPath = path.join(__dirname, 'public', 'financiero-app', 'browser');
 app.use('/financiero', express.static(angularPath));
 
-// Fallback para Angular SPA
 app.get(/\/financiero.*/, (req, res) => {
     res.sendFile(path.join(angularPath, 'index.html'));
 });
@@ -146,10 +165,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`================================================`);
-    console.log(`   SERVIDOR ECOVIDA ACTIVO`);
-    console.log(`   Puerto: ${PORT}`);
-    console.log(`================================================`);
+    console.log(`SERVIDOR ECOVIDA ACTIVO en puerto ${PORT}`);
 });
 
 module.exports = app;
