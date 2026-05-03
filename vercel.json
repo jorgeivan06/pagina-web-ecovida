@@ -1,15 +1,30 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "app.js",
-      "use": "@vercel/node"
+  "functions": {
+    "app.js": {
+      "runtime": "@vercel/node"
     }
-  ],
+  },
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/api/(.*)",
       "dest": "app.js"
+    },
+    {
+      "src": "/upload-financiero",
+      "dest": "app.js"
+    },
+    {
+      "src": "/financiero/(.*)",
+      "dest": "/financiero-app/browser/$1"
+    },
+    {
+      "src": "/financiero",
+      "dest": "/financiero-app/browser/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ]
 }
