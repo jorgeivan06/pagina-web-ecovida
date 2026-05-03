@@ -3,29 +3,16 @@
   "builds": [
     {
       "src": "app.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["public/**", "config.json"]
+      }
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "app.js"
-    },
-    {
-      "src": "/upload-financiero",
-      "dest": "app.js"
-    },
-    {
-      "src": "/financiero/(.*)",
-      "dest": "/financiero-app/browser/$1"
-    },
-    {
-      "src": "/financiero",
-      "dest": "/financiero-app/browser/index.html"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/$1"
+      "dest": "app.js"
     }
   ]
 }
