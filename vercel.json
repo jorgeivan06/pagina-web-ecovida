@@ -29,7 +29,8 @@
     },
     {
       "src": "/(.*)",
-      "dest": "app.js"
+      "dest": "/$1"
     }
-  ]
+  ],
+  "cleanUrls": true
 }
