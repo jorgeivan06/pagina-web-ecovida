@@ -11,6 +11,22 @@
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "app.js"
+    },
+    {
+      "src": "/upload-financiero",
+      "dest": "app.js"
+    },
+    {
+      "src": "/financiero/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf|mp4))$",
+      "dest": "/public/financiero-app/browser/$1"
+    },
+    {
+      "src": "/financiero/(.*)",
+      "dest": "app.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "app.js"
     }
