@@ -28,14 +28,11 @@ let kvClient = null;
 
 function getKVClient() {
     if (kvClient) return kvClient;
-
-    // Buscamos las credenciales sin importar el prefijo que Vercel haya puesto
     const env = process.env;
     const urlKey = Object.keys(env).find(k => k.endsWith('_REST_API_URL'));
     const tokenKey = Object.keys(env).find(k => k.endsWith('_REST_API_TOKEN'));
 
     if (urlKey && tokenKey) {
-        console.log(`Conectando a KV usando: ${urlKey}`);
         kvClient = createClient({
             url: env[urlKey],
             token: env[tokenKey],
@@ -51,9 +48,7 @@ async function getAdminPassword() {
         try {
             const kvPassword = await kv.get('adminPassword');
             if (kvPassword) return kvPassword;
-        } catch (e) {
-            console.error("Error al leer de KV:", e.message);
-        }
+        } catch (e) {}
     }
 
     if (process.env.ADMIN_PASSWORD) {
@@ -69,17 +64,6 @@ async function getAdminPassword() {
 
     return 'admin123';
 }
-
-// RUTA DIAGNÓSTICA MEJORADA
-app.get('/api/admin/debug-kv', async (req, res) => {
-    const envKeys = Object.keys(process.env);
-    res.json({
-        kvFound: !!getKVClient(),
-        relevantEnvKeys: envKeys.filter(k => k.includes('KV') || k.includes('REST_API')),
-        nodeEnv: process.env.NODE_ENV,
-        platform: process.env.VERCEL ? 'Vercel' : 'Local'
-    });
-});
 
 // RUTA: Login Administrativo
 app.post('/api/admin/login', async (req, res) => {
@@ -102,20 +86,16 @@ app.post('/api/admin/change-password', async (req, res) => {
         if (kv) {
             try {
                 await kv.set('adminPassword', newPassword);
-                return res.json({ success: true, message: 'Contraseña actualizada en la Nube (KV)' });
+                return res.json({ success: true, message: 'Contraseña actualizada en la Nube' });
             } catch (e) {
                 return res.status(500).json({ success: false, message: 'Error en KV: ' + e.message });
             }
         } else {
-            // Intento local (Fallback)
             try {
                 fs.writeFileSync(CONFIG_PATH, JSON.stringify({ adminPassword: newPassword }, null, 2));
                 return res.json({ success: true, message: 'Contraseña actualizada localmente' });
             } catch (e) {
-                return res.status(500).json({ 
-                    success: false, 
-                    message: 'Vercel KV no detectado. Asegúrate de haber conectado la base de datos en el panel de Storage de Vercel y haber hecho un Redeploy.' 
-                });
+                return res.status(500).json({ success: false, message: 'No se pudo guardar la contraseña' });
             }
         }
     } else {
@@ -167,24 +147,26 @@ app.delete('/api/documentos/:filename', (req, res) => {
     }
 });
 
-// Archivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// En local servimos los estáticos para pruebas
+if (process.env.NODE_ENV !== 'production') {
+    app.use(express.static(path.join(__dirname, 'public')));
+    app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+    const angularPath = path.join(__dirname, 'public', 'financiero', 'browser');
+    app.use('/financiero', express.static(angularPath));
+    app.get(/\/financiero.*/, (req, res) => {
+        res.sendFile(path.join(angularPath, 'index.html'));
+    });
+    app.get('/', (req, res) => {
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    });
+}
 
-// Aplicación Angular
-const angularPath = path.join(__dirname, 'public', 'financiero-app', 'browser');
-app.use('/financiero', express.static(angularPath));
-
-app.get(/\/financiero.*/, (req, res) => {
-    res.sendFile(path.join(angularPath, 'index.html'));
-});
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+// Para Vercel: Solo las rutas de API son necesarias aquí, 
+// ya que vercel.json maneja el resto.
+// Pero dejamos el fallback por si acaso.
 
 app.listen(PORT, () => {
-    console.log(`SERVIDOR ECOVIDA ACTIVO en puerto ${PORT}`);
+    console.log(`Servidor iniciado en puerto ${PORT}`);
 });
 
 module.exports = app;

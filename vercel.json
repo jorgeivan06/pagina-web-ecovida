@@ -21,16 +21,15 @@
     },
     {
       "src": "/financiero/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf|mp4))$",
-      "dest": "/public/$1"
+      "dest": "/public/financiero/browser/$1"
     },
     {
       "src": "/financiero(/.*)?",
-      "dest": "/public/financiero-index.html"
+      "dest": "/public/financiero/browser/index.html"
     },
     {
       "src": "/(.*)",
-      "dest": "/$1"
+      "dest": "/public/$1"
     }
-  ],
-  "cleanUrls": true
+  ]
 }
