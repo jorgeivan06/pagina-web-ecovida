@@ -136,7 +136,7 @@ img { max-width: 100%; height: auto; display: block; }
 @media (max-width: 768px) {
     .navbar { height: 70px; }
     .logo img { height: 35px; }
-    .nav-menu { display: none; } /* En una app real usaríamos un menú hamburguesa */
+    /* Nav menu logic moved to component for better control */
     
     .title-section { font-size: 1.8rem; }
     
