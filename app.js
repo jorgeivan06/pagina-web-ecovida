@@ -8,9 +8,20 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Configuración de almacenamiento para Multer
+const isVercel = process.env.VERCEL === '1';
+const UPLOADS_DIR = isVercel ? '/tmp/uploads' : path.join(__dirname, 'uploads');
+
+if (!fs.existsSync(UPLOADS_DIR)) {
+    try {
+        fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+    } catch (err) {
+        console.error('Error al crear el directorio de uploads:', err);
+    }
+}
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/')
+        cb(null, UPLOADS_DIR)
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + '-' + file.originalname)
@@ -29,13 +40,15 @@ let kvClient = null;
 function getKVClient() {
     if (kvClient) return kvClient;
     const env = process.env;
-    const urlKey = Object.keys(env).find(k => k.endsWith('_REST_API_URL'));
-    const tokenKey = Object.keys(env).find(k => k.endsWith('_REST_API_TOKEN'));
+    
+    // Vercel KV env vars
+    const url = env.KV_REST_API_URL || env.VERCEL_KV_REST_API_URL;
+    const token = env.KV_REST_API_TOKEN || env.VERCEL_KV_REST_API_TOKEN;
 
-    if (urlKey && tokenKey) {
+    if (url && token) {
         kvClient = createClient({
-            url: env[urlKey],
-            token: env[tokenKey],
+            url: url,
+            token: token,
         });
         return kvClient;
     }
@@ -48,7 +61,9 @@ async function getAdminPassword() {
         try {
             const kvPassword = await kv.get('adminPassword');
             if (kvPassword) return kvPassword;
-        } catch (e) {}
+        } catch (e) {
+            console.error('Error al leer de KV:', e);
+        }
     }
 
     if (process.env.ADMIN_PASSWORD) {
@@ -67,39 +82,53 @@ async function getAdminPassword() {
 
 // RUTA: Login Administrativo
 app.post('/api/admin/login', async (req, res) => {
-    const { password } = req.body;
-    const adminPassword = await getAdminPassword();
-    if (password === adminPassword) {
-        res.json({ success: true });
-    } else {
-        res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
+    try {
+        const { password } = req.body;
+        const adminPassword = await getAdminPassword();
+        if (password === adminPassword) {
+            res.json({ success: true });
+        } else {
+            res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Error interno: ' + err.message });
     }
 });
 
 // RUTA: Cambiar Contraseña
 app.post('/api/admin/change-password', async (req, res) => {
-    const { oldPassword, newPassword } = req.body;
-    const adminPassword = await getAdminPassword();
-    
-    if (oldPassword === adminPassword) {
-        const kv = getKVClient();
-        if (kv) {
-            try {
-                await kv.set('adminPassword', newPassword);
-                return res.json({ success: true, message: 'Contraseña actualizada en la Nube' });
-            } catch (e) {
-                return res.status(500).json({ success: false, message: 'Error en KV: ' + e.message });
+    try {
+        const { oldPassword, newPassword } = req.body;
+        const adminPassword = await getAdminPassword();
+        
+        if (oldPassword === adminPassword) {
+            const kv = getKVClient();
+            if (kv) {
+                try {
+                    await kv.set('adminPassword', newPassword);
+                    return res.json({ success: true, message: 'Contraseña actualizada en la Nube' });
+                } catch (e) {
+                    return res.status(500).json({ success: false, message: 'Error en KV: ' + e.message });
+                }
+            } else {
+                if (isVercel) {
+                    return res.status(400).json({ 
+                        success: false, 
+                        message: 'No se puede guardar localmente en Vercel. Configura Vercel KV.' 
+                    });
+                }
+                try {
+                    fs.writeFileSync(CONFIG_PATH, JSON.stringify({ adminPassword: newPassword }, null, 2));
+                    return res.json({ success: true, message: 'Contraseña actualizada localmente' });
+                } catch (e) {
+                    return res.status(500).json({ success: false, message: 'No se pudo guardar la contraseña' });
+                }
             }
         } else {
-            try {
-                fs.writeFileSync(CONFIG_PATH, JSON.stringify({ adminPassword: newPassword }, null, 2));
-                return res.json({ success: true, message: 'Contraseña actualizada localmente' });
-            } catch (e) {
-                return res.status(500).json({ success: false, message: 'No se pudo guardar la contraseña' });
-            }
+            res.status(401).json({ success: false, message: 'La contraseña actual es incorrecta' });
         }
-    } else {
-        res.status(401).json({ success: false, message: 'La contraseña actual es incorrecta' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Error interno: ' + err.message });
     }
 });
 
@@ -113,27 +142,36 @@ app.post('/upload-financiero', upload.single('documento'), (req, res) => {
 
 // RUTA: Listar archivos
 app.get('/api/documentos', (req, res) => {
-    const directoryPath = path.join(__dirname, 'uploads');
-    if (!fs.existsSync(directoryPath)) {
-        fs.mkdirSync(directoryPath);
+    if (!fs.existsSync(UPLOADS_DIR)) {
+        return res.json([]);
     }
-    fs.readdir(directoryPath, (err, files) => {
+    fs.readdir(UPLOADS_DIR, (err, files) => {
         if (err) {
             return res.status(500).send('Error al leer archivos.');
         }
         const fileInfos = files.map(file => ({
             name: file.split('-').slice(1).join('-'),
             filename: file,
-            url: `/uploads/${file}`
+            url: `/api/uploads/${file}`
         }));
         res.json(fileInfos);
     });
 });
 
+// RUTA: Servir archivos de upload (necesario en Vercel para /tmp)
+app.get('/api/uploads/:filename', (req, res) => {
+    const filePath = path.join(UPLOADS_DIR, req.params.filename);
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send('Archivo no encontrado');
+    }
+});
+
 // RUTA: Eliminar archivo
 app.delete('/api/documentos/:filename', (req, res) => {
     const filename = req.params.filename;
-    const filePath = path.join(__dirname, 'uploads', filename);
+    const filePath = path.join(UPLOADS_DIR, filename);
 
     if (fs.existsSync(filePath)) {
         fs.unlink(filePath, (err) => {
@@ -148,14 +186,26 @@ app.delete('/api/documentos/:filename', (req, res) => {
 });
 
 // En local servimos los estáticos para pruebas
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && !isVercel) {
     app.use(express.static(path.join(__dirname, 'public')));
-    app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+    app.use('/uploads', express.static(UPLOADS_DIR));
+    
     const angularPath = path.join(__dirname, 'public', 'financiero', 'browser');
+    
+    // Servir la App de Angular en /financiero
     app.use('/financiero', express.static(angularPath));
-    app.get(/\/financiero.*/, (req, res) => {
-        res.sendFile(path.join(angularPath, 'index.html'));
+    
+    // Fallback para Angular (SPA Routing)
+    app.get(/^\/financiero($|\/.*)/, (req, res) => {
+        const indexPath = path.join(angularPath, 'index.html');
+        if (fs.existsSync(indexPath)) {
+            res.sendFile(indexPath);
+        } else {
+            res.status(404).send('Angular build not found in /public/financiero/browser. Run npm run build.');
+        }
     });
+
+    // Servir el index.html principal de la landing page
     app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname, 'public', 'index.html'));
     });

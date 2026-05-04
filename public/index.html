@@ -1,15 +1,278 @@
-<!doctype html>
-<html lang="es" data-beasties-container>
-<head><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <meta charset="utf-8">
-  <title>Estados Financieros - ECOVIDA</title>
-  <base href="/financiero/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/jpg" href="https://media.istockphoto.com/id/1133470104/es/vector/silueta-de-mujer-embarazada-con-coraz%C3%B3n-sobre-fondo-azul-oscuro.jpg?s=612x612&amp;w=0&amp;k=20&amp;c=6tEK-z7WWit4tPXQwsAt_aouaMy1X2-vmMqYR-Swygg=">
-  <style>@font-face{font-family:'Poppins';font-style:normal;font-weight:300;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z11lFc-K.woff2) format('woff2');unicode-range:U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;}@font-face{font-family:'Poppins';font-style:normal;font-weight:300;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1JlFc-K.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;}@font-face{font-family:'Poppins';font-style:normal;font-weight:300;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1xlFQ.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}@font-face{font-family:'Poppins';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJbecmNE.woff2) format('woff2');unicode-range:U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;}@font-face{font-family:'Poppins';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJnecmNE.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;}@font-face{font-family:'Poppins';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecg.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}@font-face{font-family:'Poppins';font-style:normal;font-weight:500;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z11lFc-K.woff2) format('woff2');unicode-range:U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;}@font-face{font-family:'Poppins';font-style:normal;font-weight:500;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1JlFc-K.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;}@font-face{font-family:'Poppins';font-style:normal;font-weight:500;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1xlFQ.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}@font-face{font-family:'Poppins';font-style:normal;font-weight:600;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z11lFc-K.woff2) format('woff2');unicode-range:U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;}@font-face{font-family:'Poppins';font-style:normal;font-weight:600;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1JlFc-K.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;}@font-face{font-family:'Poppins';font-style:normal;font-weight:600;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}@font-face{font-family:'Poppins';font-style:normal;font-weight:700;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z11lFc-K.woff2) format('woff2');unicode-range:U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;}@font-face{font-family:'Poppins';font-style:normal;font-weight:700;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1JlFc-K.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;}@font-face{font-family:'Poppins';font-style:normal;font-weight:700;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}</style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<style>@font-face{font-family:Poppins;font-style:normal;font-weight:300;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z11lFc-K.woff2) format("woff2");unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF,U+11B00-11B09}@font-face{font-family:Poppins;font-style:normal;font-weight:300;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1JlFc-K.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:Poppins;font-style:normal;font-weight:300;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1xlFQ.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:Poppins;font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJbecmNE.woff2) format("woff2");unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF,U+11B00-11B09}@font-face{font-family:Poppins;font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJnecmNE.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:Poppins;font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecg.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:Poppins;font-style:normal;font-weight:500;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z11lFc-K.woff2) format("woff2");unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF,U+11B00-11B09}@font-face{font-family:Poppins;font-style:normal;font-weight:500;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1JlFc-K.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:Poppins;font-style:normal;font-weight:500;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1xlFQ.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:Poppins;font-style:normal;font-weight:600;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z11lFc-K.woff2) format("woff2");unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF,U+11B00-11B09}@font-face{font-family:Poppins;font-style:normal;font-weight:600;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1JlFc-K.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:Poppins;font-style:normal;font-weight:600;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:Poppins;font-style:normal;font-weight:700;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z11lFc-K.woff2) format("woff2");unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF,U+11B00-11B09}@font-face{font-family:Poppins;font-style:normal;font-weight:700;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1JlFc-K.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:Poppins;font-style:normal;font-weight:700;font-display:swap;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}:root{--primary:#005073;--primary-dark:#003d5b;--accent:#007ea7;--navbar-bg:#003E5E;--footer-bg:#1F9E89;--text-dark:#2c3e50;--text-light:#5a6c7d;--bg-gray:#f4f7f9;--white:#ffffff;--shadow:0 4px 20px rgba(0,0,0,.08);--transition:all .3s ease;--header-h:80px;--admin-bar-h:40px}*{margin:0;padding:0;box-sizing:border-box}body{font-family:Poppins,sans-serif;color:var(--text-dark);line-height:1.6;background-color:var(--white);-webkit-font-smoothing:antialiased}@media(max-width:768px){:root{--header-h:70px}}</style><link rel="stylesheet" href="styles-N5WYSFLG.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles-N5WYSFLG.css"></noscript></head>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECOVIDA - Centro Médico Especializado</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpg" href="https://media.istockphoto.com/id/1133470104/es/vector/silueta-de-mujer-embarazada-con-coraz%C3%B3n-sobre-fondo-azul-oscuro.jpg?s=612x612&w=0&k=20&c=6tEK-z7WWit4tPXQwsAt_aouaMy1X2-vmMqYR-Swygg=">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
 <body>
-  <app-root></app-root>
-<script src="main-4ZCKKSSU.js" type="module"></script></body>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <header class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <a href="#inicio">
+                    <img src="https://static.wixstatic.com/media/7e16b4_47f971106b36479a905498b01633c52e~mv2.png/v1/fill/w_283,h_75,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Ecovida%20blanco%20y%20verde.png" alt="ECOVIDA">
+                </a>
+            </div>
+            <nav>
+                <div class="menu-toggle" id="mobile-menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#nosotros">Nosotros</a></li>
+                    <li><a href="#servicios">Especialidades</a></li>
+                    <li><a href="#laboratorio">Laboratorio</a></li>
+                    <li><a href="/financiero">Financiero</a></li>
+                    <li><a href="#citas" class="btn-nav">Agendar Cita</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- SECCIÓN: INICIO (HERO) -->
+        <section id="inicio" class="hero">
+            <div class="container">
+                <div class="hero-text">
+                    <span class="tagline">Bienvenida a ECOVIDA</span>
+                    <h1>Cuidado Especializado para la Mujer y su Bebé</h1>
+                    <p>Acompañamos cada etapa con tecnología de punta y la calidez humana que tú y tu hijo merecen. Tu bienestar es nuestra prioridad.</p>
+                    <div class="hero-btns">
+                        <a href="#servicios" class="btn btn-primary">Ver Especialidades</a>
+                        <a href="#citas" class="btn btn-secondary">Agenda tu Cita</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: NOSOTROS -->
+        <section id="nosotros" class="section-padding">
+            <div class="container">
+                <div class="nosotros-flex">
+                    <div class="nosotros-image">
+                        <img src="https://bbmundo.com/wp-content/uploads/2015/09/primer.jpg" alt="Cuidado Materno ECOVIDA">
+                    </div>
+                    <div class="nosotros-text">
+                        <span class="tagline">Quiénes Somos</span>
+                        <h2 class="title-section" style="text-align: left; margin-bottom: 20px;">Salud Materno-Perinatal Integral</h2>
+                        <p><strong>CENTRO ESPECIALIZADO ECOVIDA SAS</strong> es una entidad líder que ofrece servicios de consultas de ginecología, ginecobstetricia, materno fetal, nutrición, psicología y planificación familiar. Nos enfocamos en las etapas más importantes de la vida de la mujer, con énfasis en el binomio Madre e hijo.</p>
+                        
+                        <div class="mv-cards-container">
+                            <div class="mv-card">
+                                <div class="mv-icon"><i class="fas fa-bullseye"></i></div>
+                                <h4>Misión</h4>
+                                <p>Ofrecer un servicio integral y humanizado, bajo los más altos estándares de calidad, generando seguridad y oportunidad a nuestros usuarios.</p>
+                            </div>
+                            <div class="mv-card">
+                                <div class="mv-icon"><i class="fas fa-eye"></i></div>
+                                <h4>Visión</h4>
+                                <p>Ser en 2025 la IPS reconocida en la región por su compromiso con la calidad, humanización y tecnología de avanzada.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: ESPECIALIDADES -->
+        <section id="servicios" class="section-padding bg-gray">
+            <div class="container">
+                <div class="text-center mb-50">
+                    <h2 class="title-section">Especialidades Médicas</h2>
+                    <div class="divider"></div>
+                </div>
+                <div class="grid-services">
+                    <!-- Consulta Materno Fetal -->
+                    <div class="card-service clickable">
+                        <i class="fas fa-stethoscope"></i>
+                        <h3>Consulta Materno Fetal</h3>
+                        <p>Evaluación detallada de la salud materna y fetal con especialistas.</p>
+                        <div class="detail-service">
+                            <hr style="margin: 15px 0; border-top: 1px solid #eee;">
+                            <p><strong>Especialista:</strong> Perinatólogos Expertos</p>
+                            <p><strong>Función:</strong> Manejo de embarazos de alto riesgo y asesoría integral.</p>
+                        </div>
+                    </div>
+                    <!-- Medicina Maternofetal -->
+                    <div class="card-service clickable">
+                        <i class="fas fa-ultrasound"></i>
+                        <h3>Medicina Maternofetal</h3>
+                        <p>Seguimiento avanzado y diagnósticos con tecnología de punta.</p>
+                        <div class="detail-service">
+                            <hr style="margin: 15px 0; border-top: 1px solid #eee;">
+                            <p><strong>Especialista:</strong> Perinatólogos Senior</p>
+                            <p><strong>Función:</strong> Diagnósticos avanzados y procedimientos especializados.</p>
+                        </div>
+                    </div>
+                    <!-- Pediatría -->
+                    <div class="card-service clickable">
+                        <i class="fas fa-baby"></i>
+                        <h3>Pediatría</h3>
+                        <p>Cuidado integral para el desarrollo y salud de la niñez.</p>
+                        <div class="detail-service">
+                            <hr style="margin: 15px 0; border-top: 1px solid #eee;">
+                            <p><strong>Especialista:</strong> Pediatras Certificados</p>
+                            <p><strong>Función:</strong> Atención integral, vacunación y control de crecimiento.</p>
+                        </div>
+                    </div>
+                    <!-- Patología Cervical -->
+                    <div class="card-service clickable">
+                        <i class="fas fa-user-md"></i>
+                        <h3>Patología Cervical</h3>
+                        <p>Diagnóstico y tratamiento de patologías del tracto genital inferior.</p>
+                        <div class="detail-service">
+                            <hr style="margin: 15px 0; border-top: 1px solid #eee;">
+                            <p><strong>Especialista:</strong> Ginecólogos Especialistas</p>
+                            <p><strong>Función:</strong> Prevención de cáncer y tratamiento de lesiones premalignas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: ECOGRAFÍA (VIDEO BANNER) -->
+        <section class="banner-ultrasound-video">
+            <video autoplay muted loop playsinline class="video-bg">
+                <source src="ecografia.mp4" type="video/mp4">
+                Tu navegador no soporta videos.
+            </video>
+            <div class="container">
+                <div class="banner-content">
+                    <h2>Tecnología que conecta vidas</h2>
+                    <p>Equipos de última generación para brindarte la mayor nitidez en el estudio de tu bebé.</p>
+                    <a href="#citas" class="btn btn-white">Agendar Ecografía</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: LABORATORIO -->
+        <section id="laboratorio" class="section-padding bg-gray">
+            <div class="container">
+                <div class="text-center mb-50">
+                    <h2 class="title-section">Laboratorio Clínico</h2>
+                    <div class="divider"></div>
+                </div>
+                <div class="grid-lab">
+                    <div class="card-lab">
+                        <h3><i class="fas fa-vials"></i> Rutina Prenatal</h3>
+                        <ul class="list-lab">
+                            <li><i class="fas fa-check"></i> Hemograma y Clasificación</li>
+                            <li><i class="fas fa-check"></i> Glucemia Pre y Post carga</li>
+                            <li><i class="fas fa-check"></i> Serología (VDRL / VIH)</li>
+                            <li><i class="fas fa-check"></i> Parcial de Orina y Urocultivo</li>
+                        </ul>
+                    </div>
+                    <div class="card-lab">
+                        <h3><i class="fas fa-microscope"></i> Pruebas de Control</h3>
+                        <ul class="list-lab">
+                            <li><i class="fas fa-check"></i> Perfil de Toxoplasmosis</li>
+                            <li><i class="fas fa-check"></i> Tamizaje de Diabetes Gestacional</li>
+                            <li><i class="fas fa-check"></i> Cultivo Estreptococo</li>
+                            <li><i class="fas fa-check"></i> Marcadores de Bienestar Fetal</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Portal de Resultados -->
+                <div class="results-portal">
+                    <div class="portal-header">
+                        <h3><i class="fas fa-user-lock"></i> Portal de Resultados</h3>
+                        <p>Consulta y descarga tus exámenes de laboratorio de forma segura.</p>
+                    </div>
+                    <form id="results-form" class="portal-form">
+                        <div class="portal-inputs">
+                            <input type="text" placeholder="Número de Documento" required>
+                            <input type="text" placeholder="Número de Orden / Código" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Consultar Resultados</button>
+                    </form>
+                    <div id="portal-message" class="portal-message"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: CITAS -->
+        <section id="citas" class="section-padding">
+            <div class="container">
+                <div class="appointment-card">
+                    <div class="appointment-info">
+                        <h2>Agenda tu cita</h2>
+                        <p>Nuestro equipo se pondrá en contacto contigo de inmediato para confirmar tu horario.</p>
+                        <div class="contact-links">
+                            <p><i class="fas fa-phone-alt"></i> (605) 3198847</p>
+                            <p><i class="fab fa-whatsapp"></i> 321 4273055 (Call Center)</p>
+                        </div>
+                    </div>
+                    <form class="appointment-form">
+                        <input type="text" placeholder="Tu Nombre Completo" required>
+                        <input type="tel" placeholder="Tu Teléfono / WhatsApp" required>
+                        <select required>
+                            <option value="">Selecciona el Servicio...</option>
+                            <option>Consulta Materno Fetal</option>
+                            <option>Ecografía</option>
+                            <option>Pediatría</option>
+                            <option>Laboratorio</option>
+                        </select>
+                        <button type="submit" class="btn btn-dark">Enviar Solicitud</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PIE DE PÁGINA (FOOTER) -->
+    <footer class="footer">
+        <div class="container footer-grid-main">
+            <div class="footer-brand-side">
+                <img src="https://static.wixstatic.com/media/7e16b4_077240b038f34a1ba66ff0ee07287ffa~mv2.png/v1/fill/w_470,h_83,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/El%20Coraz%C3%B3n%20de%20Mam%C3%A1.png" alt="El Corazón de Mamá">
+                <p>Tu bienestar es el latido que nos mueve.</p>
+                <div class="footer-emails">
+                    <p><strong>Escríbenos:</strong></p>
+                    <p>callcenterecovida1@gmail.com</p>
+                    <p>callcenterecovida2@gmail.com</p>
+                </div>
+            </div>
+
+            <div class="footer-contact-side">
+                <div class="contact-group">
+                    <h4><i class="fas fa-phone-alt"></i> Llámanos</h4>
+                    <p>Línea fija: (605) 3198847</p>
+                </div>
+                <div class="contact-group">
+                    <h4><i class="fab fa-whatsapp"></i> WhatsApp</h4>
+                    <ul class="whatsapp-list">
+                        <li><strong>Call Center:</strong> 321 4273055</li>
+                        <li><strong>Patología Cervical:</strong> 302 4105554</li>
+                        <li><strong>Medicina Perinatal:</strong> 313 5474125</li>
+                        <li><strong>Implantes:</strong> 301 3150031</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-hours-side">
+                <h4><i class="fas fa-clock"></i> Horario</h4>
+                <p><strong>Lun - Vie:</strong><br>7:30 am - 12:00 pm / 2:00 pm - 6:00 pm</p>
+                <p style="margin-top: 10px;"><strong>Sábados:</strong><br>8:00 am - 11:00 am</p>
+                <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">Sucre, Colombia</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ECOVIDA SAS. Todos los derechos reservados. | <a href="/financiero" style="color: inherit; text-decoration: underline;">Estados Financieros</a></p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
 </html>

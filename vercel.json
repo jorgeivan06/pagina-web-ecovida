@@ -1,35 +1,38 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "app.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "public/**/*",
-      "use": "@vercel/static"
+  "functions": {
+    "app.js": {
+      "runtime": "nodejs18.x"
     }
-  ],
-  "routes": [
+  },
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "app.js"
+      "source": "/api/uploads/(.*)",
+      "destination": "/app.js"
     },
     {
-      "src": "/upload-financiero",
-      "dest": "app.js"
+      "source": "/api/(.*)",
+      "destination": "/app.js"
     },
     {
-      "src": "/financiero/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf|mp4))$",
-      "dest": "/public/financiero/browser/$1"
+      "source": "/upload-financiero",
+      "destination": "/app.js"
     },
     {
-      "src": "/financiero(/.*)?",
-      "dest": "/public/financiero/browser/index.html"
+      "source": "/financiero/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf|mp4))$",
+      "destination": "/public/financiero/browser/$1"
     },
     {
-      "src": "/(.*)",
-      "dest": "/public/$1"
+      "source": "/financiero/(.*)",
+      "destination": "/public/financiero/browser/index.html"
+    },
+    {
+      "source": "/((?!api/|upload-financiero|financiero/).*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf|mp4|html))$",
+      "destination": "/public/$1"
+    },
+    {
+      "source": "/((?!api/|upload-financiero|financiero/).*)",
+      "destination": "/public/index.html"
     }
   ]
 }

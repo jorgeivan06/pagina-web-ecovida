@@ -1,48 +1,73 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // MENÚ MÓVIL
-    const mobileMenu = document.getElementById('mobile-menu');
-    const navMenu = document.getElementById('nav-menu');
-    const navLinks = document.querySelectorAll('.nav-menu a');
+// --- NAVEGACIÓN SUAVE (SMOOTH SCROLL) ---
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
 
-    if (mobileMenu) {
-        mobileMenu.addEventListener('click', () => {
-            mobileMenu.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
-    }
-
-    // Cerrar menú al hacer clic en un enlace
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
-            navMenu.classList.remove('active');
-        });
+        if (targetElement) {
+            window.scrollTo({
+                top: targetElement.offsetTop - 90, // Ajuste por la altura del navbar
+                behavior: 'smooth'
+            });
+        }
     });
-
-    // ESPECIALIDADES - Acordeón
-    const serviceCards = document.querySelectorAll('.card-service.clickable');
-    
-    serviceCards.forEach(card => {
-        card.addEventListener('click', () => {
-            // Cerrar otros si se desea (opcional)
-            // serviceCards.forEach(c => { if(c !== card) c.classList.remove('active'); });
-            
-            card.classList.toggle('active');
-        });
-    });
-
-    // PORTAL DE RESULTADOS (Simulación)
-    const resultsForm = document.getElementById('results-form');
-    const portalMessage = document.getElementById('portal-message');
-
-    if (resultsForm) {
-        resultsForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            portalMessage.innerHTML = `<p style="color: #005073; margin-top: 15px; font-weight: 600;"><i class="fas fa-spinner fa-spin"></i> Buscando resultados en la base de datos...</p>`;
-            
-            setTimeout(() => {
-                portalMessage.innerHTML = `<p style="color: #e74c3c; margin-top: 15px; font-weight: 600;"><i class="fas fa-exclamation-circle"></i> No se encontraron resultados. Por favor, verifique los datos o contacte a soporte.</p>`;
-            }, 2000);
-        });
-    }
 });
+
+// --- MENÚ MÓVIL ---
+const menuToggle = document.getElementById('mobile-menu');
+const navMenu = document.querySelector('.nav-menu');
+
+if (menuToggle) {
+    menuToggle.addEventListener('click', () => {
+        menuToggle.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+}
+
+// Cerrar menú al hacer clic en un enlace
+document.querySelectorAll('.nav-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+        menuToggle.classList.remove('active');
+        navMenu.classList.remove('active');
+    });
+});
+
+// --- INTERACTIVIDAD DE ESPECIALIDADES ---
+document.querySelectorAll('.card-service.clickable').forEach(card => {
+    card.addEventListener('click', () => {
+        // Cerrar otras tarjetas abiertas
+        document.querySelectorAll('.card-service.clickable').forEach(other => {
+            if (other !== card) other.classList.remove('active');
+        });
+        // Alternar estado de la tarjeta actual
+        card.classList.toggle('active');
+    });
+});
+
+// --- REINICIO AL CLIC EN EL LOGO ---
+document.querySelector('.logo a').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
+
+// --- PORTAL DE RESULTADOS (SIMULACIÓN) ---
+const resultsForm = document.getElementById('results-form');
+const portalMessage = document.getElementById('portal-message');
+
+if (resultsForm) {
+    resultsForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        portalMessage.style.color = 'var(--text-dark)';
+        portalMessage.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando resultados en el sistema...';
+
+        setTimeout(() => {
+            portalMessage.style.color = '#d32f2f'; // Rojo error
+            portalMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> No se encontraron resultados con los datos proporcionados. Por favor, verifique e intente de nuevo.';
+        }, 2000);
+    });
+}
