@@ -3,10 +3,11 @@
   "builds": [
     {
       "src": "app.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["public/**", "config.json"]
-      }
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/**/*",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -20,11 +21,11 @@
     },
     {
       "src": "/financiero/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf|mp4))$",
-      "dest": "/public/financiero-app/browser/$1"
+      "dest": "/public/$1"
     },
     {
-      "src": "/financiero/(.*)",
-      "dest": "app.js"
+      "src": "/financiero(/.*)?",
+      "dest": "/public/financiero-index.html"
     },
     {
       "src": "/(.*)",
