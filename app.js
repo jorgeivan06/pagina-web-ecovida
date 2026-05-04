@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
-const { kv } = require('@vercel/kv');
+const { createClient } = require('@vercel/kv');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,15 +23,31 @@ app.use(express.json());
 
 const CONFIG_PATH = path.join(__dirname, 'config.json');
 
-// Función mejorada para detectar si KV está configurado realmente
-function isKVEnabled() {
-    // Vercel KV inyecta KV_REST_API_URL o similares
-    return !!(process.env.KV_REST_API_URL || process.env.KV_URL);
+// --- LÓGICA DE DETECCIÓN DINÁMICA DE VERCEL KV ---
+let kvClient = null;
+
+function getKVClient() {
+    if (kvClient) return kvClient;
+
+    // Buscamos las credenciales sin importar el prefijo que Vercel haya puesto
+    const env = process.env;
+    const urlKey = Object.keys(env).find(k => k.endsWith('_REST_API_URL'));
+    const tokenKey = Object.keys(env).find(k => k.endsWith('_REST_API_TOKEN'));
+
+    if (urlKey && tokenKey) {
+        console.log(`Conectando a KV usando: ${urlKey}`);
+        kvClient = createClient({
+            url: env[urlKey],
+            token: env[tokenKey],
+        });
+        return kvClient;
+    }
+    return null;
 }
 
 async function getAdminPassword() {
-    // 1. Intentar Vercel KV si está disponible
-    if (isKVEnabled()) {
+    const kv = getKVClient();
+    if (kv) {
         try {
             const kvPassword = await kv.get('adminPassword');
             if (kvPassword) return kvPassword;
@@ -40,12 +56,10 @@ async function getAdminPassword() {
         }
     }
 
-    // 2. Variable de entorno manual
     if (process.env.ADMIN_PASSWORD) {
         return process.env.ADMIN_PASSWORD;
     }
     
-    // 3. Archivo local (Desarrollo)
     try {
         if (fs.existsSync(CONFIG_PATH)) {
             const config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
@@ -53,16 +67,17 @@ async function getAdminPassword() {
         }
     } catch (e) {}
 
-    // 4. Clave maestra inicial
     return 'admin123';
 }
 
-// RUTA DIAGNÓSTICA: Para verificar conexión a base de datos
+// RUTA DIAGNÓSTICA MEJORADA
 app.get('/api/admin/debug-kv', async (req, res) => {
+    const envKeys = Object.keys(process.env);
     res.json({
-        kvConfigured: isKVEnabled(),
-        envKeysFound: Object.keys(process.env).filter(k => k.includes('KV')),
-        timestamp: new Date().toISOString()
+        kvFound: !!getKVClient(),
+        relevantEnvKeys: envKeys.filter(k => k.includes('KV') || k.includes('REST_API')),
+        nodeEnv: process.env.NODE_ENV,
+        platform: process.env.VERCEL ? 'Vercel' : 'Local'
     });
 });
 
@@ -83,7 +98,8 @@ app.post('/api/admin/change-password', async (req, res) => {
     const adminPassword = await getAdminPassword();
     
     if (oldPassword === adminPassword) {
-        if (isKVEnabled()) {
+        const kv = getKVClient();
+        if (kv) {
             try {
                 await kv.set('adminPassword', newPassword);
                 return res.json({ success: true, message: 'Contraseña actualizada en la Nube (KV)' });
@@ -91,12 +107,15 @@ app.post('/api/admin/change-password', async (req, res) => {
                 return res.status(500).json({ success: false, message: 'Error en KV: ' + e.message });
             }
         } else {
-            // Si no hay KV, intentamos local (solo funciona en tu PC)
+            // Intento local (Fallback)
             try {
                 fs.writeFileSync(CONFIG_PATH, JSON.stringify({ adminPassword: newPassword }, null, 2));
                 return res.json({ success: true, message: 'Contraseña actualizada localmente' });
             } catch (e) {
-                return res.status(500).json({ success: false, message: 'No hay base de datos conectada en Vercel. Use variables de entorno.' });
+                return res.status(500).json({ 
+                    success: false, 
+                    message: 'Vercel KV no detectado. Asegúrate de haber conectado la base de datos en el panel de Storage de Vercel y haber hecho un Redeploy.' 
+                });
             }
         }
     } else {
