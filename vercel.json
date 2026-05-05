@@ -27,11 +27,19 @@
       "destination": "/public/financiero/browser/index.html"
     },
     {
-      "source": "/((?!api/|upload-financiero|financiero/).*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf|mp4|html))$",
+      "source": "/css/(.*)",
+      "destination": "/public/css/$1"
+    },
+    {
+      "source": "/js/(.*)",
+      "destination": "/public/js/$1"
+    },
+    {
+      "source": "/(.*\\.(mp4|png|jpg|ico))$",
       "destination": "/public/$1"
     },
     {
-      "source": "/((?!api/|upload-financiero|financiero/).*)",
+      "source": "/(.*)",
       "destination": "/public/index.html"
     }
   ]
