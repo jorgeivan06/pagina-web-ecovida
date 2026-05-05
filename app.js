@@ -3,9 +3,23 @@ const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
 const { createClient } = require('@vercel/kv');
+const { createClient: createSupabaseClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// --- LÓGICA DE DETECCIÓN DINÁMICA DE SUPABASE ---
+let supabase = null;
+function getSupabase() {
+    if (supabase) return supabase;
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (url && key) {
+        supabase = createSupabaseClient(url, key);
+        return supabase;
+    }
+    return null;
+}
 
 // Configuración de almacenamiento para Multer
 const isVercel = process.env.VERCEL === '1';
@@ -56,6 +70,22 @@ function getKVClient() {
 }
 
 async function getAdminPassword() {
+    // 1. Intentar con Supabase
+    const sb = getSupabase();
+    if (sb) {
+        try {
+            const { data, error } = await sb
+                .from('config')
+                .select('value')
+                .eq('key', 'adminPassword')
+                .single();
+            if (data && data.value) return data.value;
+        } catch (e) {
+            console.error('Error al leer de Supabase:', e);
+        }
+    }
+
+    // 2. Intentar con KV
     const kv = getKVClient();
     if (kv) {
         try {
@@ -102,11 +132,25 @@ app.post('/api/admin/change-password', async (req, res) => {
         const adminPassword = await getAdminPassword();
         
         if (oldPassword === adminPassword) {
+            // 1. Guardar en Supabase
+            const sb = getSupabase();
+            if (sb) {
+                try {
+                    const { error } = await sb
+                        .from('config')
+                        .upsert({ key: 'adminPassword', value: newPassword });
+                    if (!error) return res.json({ success: true, message: 'Contraseña actualizada en Supabase' });
+                } catch (e) {
+                    console.error('Error en Supabase:', e);
+                }
+            }
+
+            // 2. Guardar en KV
             const kv = getKVClient();
             if (kv) {
                 try {
                     await kv.set('adminPassword', newPassword);
-                    return res.json({ success: true, message: 'Contraseña actualizada en la Nube' });
+                    return res.json({ success: true, message: 'Contraseña actualizada en la Nube (KV)' });
                 } catch (e) {
                     return res.status(500).json({ success: false, message: 'Error en KV: ' + e.message });
                 }
@@ -114,7 +158,7 @@ app.post('/api/admin/change-password', async (req, res) => {
                 if (isVercel) {
                     return res.status(400).json({ 
                         success: false, 
-                        message: 'No se puede guardar localmente en Vercel. Configura Vercel KV.' 
+                        message: 'No se puede guardar localmente en Vercel. Configura Supabase o KV.' 
                     });
                 }
                 try {
